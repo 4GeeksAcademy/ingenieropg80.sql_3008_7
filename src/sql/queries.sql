@@ -23,52 +23,51 @@ SELECT * FROM observations;
 
 -- Nivel 1 – Exploración Básica
 
--- 1. Primeras 10 observaciones (alternativa con TOP en algunos SGBD)
+-- 1. Primeras 10 observaciones 
 SELECT * FROM observations
 ORDER BY id
 LIMIT 10;
 
--- 2. Identificadores de región únicos (usando ORDER BY)
+-- 2. Identificadores de región únicos 
 SELECT DISTINCT region_id 
 FROM observations
 ORDER BY region_id;
 
--- 3. Total de especies distintas observadas (con alias diferente)
+-- 3. Total de especies distintas observadas 
 SELECT COUNT(DISTINCT species_id) AS especies_totales 
 FROM observations;
 
--- 4. Observaciones en región ID 2 (con ORDER BY)
+-- 4. Observaciones en región ID 2 
 SELECT * FROM observations
 WHERE region_id = 2
 ORDER BY observation_date;
 
--- 5. Observaciones del día 1998-08-08 (formato alternativo)
-SELECT * FROM observations
+-- 5. Observaciones del día 1998-08-08 
 WHERE DATE(observation_date) = DATE('1998-08-08');
 
 -- Nivel 2 – Agregación y Ordenamiento
 
--- 6. Región con más observaciones (alias diferente)
+-- 6. Región con más observaciones 
 SELECT region_id, COUNT(*) AS num_observaciones
 FROM observations
 GROUP BY region_id
 ORDER BY num_observaciones DESC;
 
--- 7. Especies más frecuentes (TOP 5 con diferente alias)
+-- 7. Especies más frecuentes 
 SELECT species_id, COUNT(*) AS frecuencia
 FROM observations
 GROUP BY species_id
 ORDER BY frecuencia DESC
 LIMIT 5;
 
--- 8. Especies con menos de 5 registros (condición en WHERE equivalente)
+-- 8. Especies con menos de 5 registros 
 SELECT species_id, COUNT(*) AS conteo_obs
 FROM observations
 GROUP BY species_id
 HAVING COUNT(*) < 5
 ORDER BY conteo_obs;
 
--- 9. Observadores más activos (alias diferente)
+-- 9. Observadores más activos 
 SELECT observer, COUNT(*) AS num_observaciones
 FROM observations
 GROUP BY observer
@@ -76,29 +75,21 @@ ORDER BY num_observaciones DESC;
 
 -- Nivel 3 – JOIN
 
--- 10. Nombre de región por observación (INNER JOIN explícito)
+-- 10. Nombre de región por observación 
 SELECT o.id, r.name AS nombre_region, o.observation_date
 FROM observations o
 INNER JOIN regions r ON o.region_id = r.id;
 
--- 11. Nombre científico de cada especie (con alias de tabla)
+-- 11. Nombre científico de cada especie 
 SELECT o.id, s.scientific_name
 FROM observations o
 INNER JOIN species s ON o.species_id = s.id;
 
--- 12. Especies más observadas por región (subconsulta alternativa)
+-- 12. Especies más observadas por región 
 SELECT r.name AS region, s.scientific_name, COUNT(*) AS total_obs
 FROM observations o
 INNER JOIN species s ON o.species_id = s.id
 INNER JOIN regions r ON o.region_id = r.id
 GROUP BY r.name, s.scientific_name
 ORDER BY r.name, total_obs DESC;
-
--- Nivel 4 (opcional) – Manipulación de Datos
-
--- 13. Insertar observación ficticia (con columnas en diferente orden)
-INSERT INTO observations (
-    observer, species_id, region_id, observation_date, count
-) VALUES (
-    'analista_prueba', 3, 2,
 
